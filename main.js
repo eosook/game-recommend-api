@@ -19,9 +19,7 @@ let config =  {
 
 app.post("/games", async (req, res) => {
    const title = req.body.name;
-   console.log(title);
    let data = `fields name; search "${title}"; limit 5;`
-   console.log (data);
   try {
     const response = await axios.post("https://api.igdb.com/v4/games", data ,config);
     res.json(response.data);
