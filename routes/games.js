@@ -34,7 +34,36 @@ router.route('/:id').post(async (req, res) => {
       data,
       config
     );
-    console.log(response.data)
+    res.json(response.data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.route('/genre/:id').post(async (req, res) => {
+  const id = req.params.id;
+  let data = `fields *; where id = ${id};`;
+  try {
+    const response = await axios.post(
+      "https://api.igdb.com/v4/genres",
+      data,
+      config
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.route('/screenshot/:id').post(async (req, res) => {
+  const id = req.params.id;
+  let data = `fields url; where id = ${id};`;
+  try {
+    const response = await axios.post(
+      "https://api.igdb.com/v4/screenshots",
+      data,
+      config
+    );
     res.json(response.data);
   } catch (error) {
     res.send(error);
