@@ -28,7 +28,7 @@ router.route('/').post(async (req, res) => {
 router.route('/genre').post(async (req, res) => {
   try {
     const genre = req.body.genre;
-    let data = `fields name, genres; limit 5; WHERE genres in ${genre}`;
+    let data = `fields *; limit 5; where genres = ${genre};`;
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
       data,
@@ -42,14 +42,16 @@ router.route('/genre').post(async (req, res) => {
 
 router.route('/popular').post(async (req, res) => {
   const genres = req.body.genres;
-  let data = `fields *; sort value desc; limit 500; where popularity_type = 3;`;
+  console.log(genres);
+  let data = `fields name, genres.name, summary, aggregated_rating, total_rating_count; sort total_rating_count desc; limit 10; where genres = [${genres.join(",")}];`;
   try {
     const response = await axios.post(
-      "https://api.igdb.com/v4/popularity_primitives",
+      "https://api.igdb.com/v4/games",
       data,
       config
     );
     res.json(response.data);
+    console.log(response.data);
   } catch (error) {
     res.send(error);
   }
@@ -57,7 +59,7 @@ router.route('/popular').post(async (req, res) => {
 
 router.route('/:id').post(async (req, res) => {
   const id = req.params.id;
-  let data = `fields *; where id =  ${id};`;
+  let data = `fields *; where id = ${id};`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
