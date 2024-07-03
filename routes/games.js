@@ -42,8 +42,7 @@ router.route('/genre').post(async (req, res) => {
 
 router.route('/popular').post(async (req, res) => {
   const genres = req.body.genres;
-  console.log(genres);
-  let data = `fields name, genres.name, summary, aggregated_rating, total_rating_count; sort total_rating_count desc; limit 10; where genres = [${genres.join(",")}];`;
+  let data = `fields name, genres.name, summary, total_rating, total_rating_count, cover.url, first_release_date; sort total_rating_count desc; limit 10; where (genres = [${genres.join(",")}] & first_release_date > 1641013200 & total_rating > 80);`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
@@ -51,7 +50,6 @@ router.route('/popular').post(async (req, res) => {
       config
     );
     res.json(response.data);
-    console.log(response.data);
   } catch (error) {
     res.send(error);
   }
@@ -59,7 +57,7 @@ router.route('/popular').post(async (req, res) => {
 
 router.route('/:id').post(async (req, res) => {
   const id = req.params.id;
-  let data = `fields *; where id = ${id};`;
+  let data = `fields name, cover.url, genres, summary, first_release_date, total_rating, screenshots; where id = ${id};`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
