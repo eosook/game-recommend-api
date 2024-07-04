@@ -7,6 +7,7 @@ export function up(knex) {
         table.increments("id").primary();
         table.string("user_name").notNullable();
         table.string("password").notNullable();
+        table.string("name").notNullable();
 });
 };
 
