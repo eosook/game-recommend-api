@@ -38,7 +38,6 @@ router
   .route("/played_games/:userId")
   .get(async (req, res) => {
     const userId = req.params.userId;
-    console.log(userId);
     try {
       const playedGames = await knex("played_games").where(
         "users_id",

@@ -57,7 +57,7 @@ router.route('/popular').post(async (req, res) => {
 
 router.route('/:id').post(async (req, res) => {
   const id = req.params.id;
-  let data = `fields name, cover.url, genres, summary, first_release_date, total_rating, screenshots; where id = ${id};`;
+  let data = `fields name, cover.url, genres, summary, first_release_date, total_rating, screenshots, videos.video_id; where id = ${id};`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
