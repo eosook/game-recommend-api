@@ -10,7 +10,7 @@ let config = {
   },
 };
 
-router.route('/').post(async (req, res) => {
+router.route("/").post(async (req, res) => {
   try {
     const title = req.body.name;
     let data = `fields name, genres; search "${title}"; limit 5;`;
@@ -25,7 +25,7 @@ router.route('/').post(async (req, res) => {
   }
 });
 
-router.route('/genre').post(async (req, res) => {
+router.route("/genre").post(async (req, res) => {
   try {
     const genre = req.body.genre;
     let data = `fields *; limit 5; where genres = ${genre};`;
@@ -40,9 +40,11 @@ router.route('/genre').post(async (req, res) => {
   }
 });
 
-router.route('/popular').post(async (req, res) => {
-  const genres = req.body.genres;
-  let data = `fields name, genres.name, summary, total_rating, total_rating_count, cover.url, first_release_date; sort total_rating_count desc; limit 10; where (genres = [${genres.join(",")}] & first_release_date > 1641013200 & total_rating > 80);`;
+router.route("/popular").post(async (req, res) => {
+  const { genres, ids } = req.body;
+  let data = `fields id, name, genres.name, summary, total_rating, total_rating_count, cover.url, first_release_date; sort total_rating_count desc; limit 10; where (genres = [${genres.join(
+    ","
+  )}] & first_release_date > 1641013200 & total_rating > 80 & id != (${ids.join(",")}));`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
@@ -53,9 +55,9 @@ router.route('/popular').post(async (req, res) => {
   } catch (error) {
     res.send(error);
   }
-})
+});
 
-router.route('/:id').post(async (req, res) => {
+router.route("/:id").post(async (req, res) => {
   const id = req.params.id;
   let data = `fields name, cover.url, genres, summary, first_release_date, total_rating, screenshots, videos.video_id; where id = ${id};`;
   try {
@@ -70,7 +72,7 @@ router.route('/:id').post(async (req, res) => {
   }
 });
 
-router.route('/genre/:id').post(async (req, res) => {
+router.route("/genre/:id").post(async (req, res) => {
   const id = req.params.id;
   let data = `fields *; where id = ${id};`;
   try {
@@ -85,7 +87,7 @@ router.route('/genre/:id').post(async (req, res) => {
   }
 });
 
-router.route('/screenshot/:id').post(async (req, res) => {
+router.route("/screenshot/:id").post(async (req, res) => {
   const id = req.params.id;
   let data = `fields url; where id = ${id};`;
   try {
