@@ -4,22 +4,37 @@ import configuration from "../knexfile.js";
 const router = express.Router();
 const knex = initKnex(configuration);
 
+const validateFields = async (req, res, next) => {
+  const {user_name, password, name} = req.body;
+  if (!user_name || !password || !name) {
+    return res.status(400).json({message: "Invalid input data."})
+  }
+  try {
+    const userNameExists = await knex("users").where({ user_name: user_name})
+    console.log(userNameExists.length);
+    if (userNameExists.length > 0) {
+      return res.status(400).json({message: "Username is already taken."})
+    }
+    next();
+  } catch (error){
+    res.status(500).json({ message: "Validation Error" });
+  }
+}
+
 router
-  .route("/:userId")
-  .get(async (req, res) => {
-    const userId = req.params.userId;
+  .route("/")
+  .get(async (_req, res) => {
     try {
-      const userProfile = await knex("users").where("id", `${userId}`);
+      const userProfile = await knex("users")
       res.json(userProfile);
     } catch {
       return res.status(500).send("Error getting user");
     }
   })
-  .post(async (req, res) => {
+  .post(validateFields, async (req, res) => {
     try {
-      const { id, user_name, password, name } = req.body;
+      const { user_name, password, name } = req.body;
       const newUser = {
-        id,
         user_name,
         password,
         name,
@@ -31,6 +46,19 @@ router
         .json({ message: "User added successfully ", user: newUser });
     } catch (error) {
       res.status(500).json({ message: "Error adding User" });
+    }
+  });
+
+
+router
+  .route("/:userId")
+  .get(async (req, res) => {
+    const userId = req.params.userId;
+    try {
+      const userProfile = await knex("users").where("id", `${userId}`);
+      res.json(userProfile);
+    } catch {
+      return res.status(500).send("Error getting user");
     }
   });
 
