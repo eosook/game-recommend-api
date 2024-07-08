@@ -93,6 +93,16 @@ router
     } catch (error) {
       res.status(500).json({ message: "Error adding Game" });
     }
+  })
+  .delete(async (req, res) => {
+    try {
+        const {game_id} = req.body;
+        const userId = req.params.userId;
+        const deletedGame = await knex("played_games").where (`id`, game_id).del();
+        res.json({message: "Game deleted", game: deletedGame});
+    } catch (error){
+        res.json({message: "Error deleting Game"});
+    }
   });
 
 router
@@ -125,6 +135,15 @@ router
         .json({ message: "Game added successfully ", game: newGame });
     } catch (error) {
       res.status(500).json({ message: "Error adding Game" });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+        const {game_id} = req.body;
+        const deletedGame = await knex("future_games").where (`id`, game_id).del();
+        res.json({message: "Game deleted", game: deletedGame});
+    } catch (error){
+        res.json({message: "Error deleting Game"});
     }
   });
 export default router;
