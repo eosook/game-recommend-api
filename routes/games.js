@@ -12,8 +12,8 @@ let config = {
 
 router.route("/").post(async (req, res) => {
   try {
-    const title = req.body.name;
-    let data = `fields name, genres; search "${title}"; limit 5;`;
+    const {gameTitle, limit} = req.body;
+    let data = `fields name, genres; search "${gameTitle.name}"; limit ${limit};`;
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
       data,
