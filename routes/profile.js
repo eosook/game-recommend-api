@@ -5,27 +5,32 @@ const router = express.Router();
 const knex = initKnex(configuration);
 
 const validateFields = async (req, res, next) => {
-  const {user_name, password, name} = req.body;
-  if (!user_name || !password || !name) {
-    return res.status(400).json({message: "Invalid input data."})
+  const { user_name, password, name } = req.body;
+  if (!user_name) {
+    return res.status(400).json({ message: "Please enter a username." });
+  } else if (!password) {
+    return res.status(400).json({ message: "Please enter a password." });
+  } else if (!name) {
+    return res.status(400).json({ message: "Please enter a name." });
+  } else if (!user_name || !password || !name) {
+    return res.status(400).json({ message: "Please fill out all the boxes." });
   }
   try {
-    const userNameExists = await knex("users").where({ user_name: user_name})
-    console.log(userNameExists.length);
+    const userNameExists = await knex("users").where({ user_name: user_name });
     if (userNameExists.length > 0) {
-      return res.status(400).json({message: "Username is already taken."})
+      return res.status(400).json({ message: "Username is already taken." });
     }
     next();
-  } catch (error){
+  } catch (error) {
     res.status(500).json({ message: "Validation Error" });
   }
-}
+};
 
 router
   .route("/")
   .get(async (_req, res) => {
     try {
-      const userProfile = await knex("users")
+      const userProfile = await knex("users");
       res.json(userProfile);
     } catch {
       return res.status(500).send("Error getting user");
@@ -39,7 +44,6 @@ router
         password,
         name,
       };
-
       await knex("users").insert(newUser);
       res
         .status(201)
@@ -49,28 +53,24 @@ router
     }
   });
 
-
-router
-  .route("/:userId")
-  .get(async (req, res) => {
-    const userId = req.params.userId;
-    try {
-      const userProfile = await knex("users").where("id", `${userId}`);
-      res.json(userProfile);
-    } catch {
-      return res.status(500).send("Error getting user");
-    }
-  });
+router.route("/:userId").get(async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const userProfile = await knex("users").where("id", `${userId}`);
+    res.json(userProfile);
+  } catch {
+    return res.status(500).send("Error getting user");
+  }
+});
 
 router
   .route("/played_games/:userId")
   .get(async (req, res) => {
     const userId = req.params.userId;
     try {
-      const playedGames = await knex("played_games").where(
-        "users_id",
-        `${userId}`
-      );
+      const playedGames = await knex("played_games")
+        .where("users_id", `${userId}`)
+        .orderBy("title", "asc");
       res.json(playedGames);
     } catch {
       return res.status(500).send("Error getting played games");
@@ -101,10 +101,9 @@ router
   .get(async (req, res) => {
     const userId = req.params.userId;
     try {
-      const futureGames = await knex("future_games").where(
-        "users_id",
-        `${userId}`
-      );
+      const futureGames = await knex("future_games")
+        .where("users_id", `${userId}`)
+        .orderBy("title", "asc");
       res.json(futureGames);
     } catch {
       return res.status(500).send("Error getting future games");
