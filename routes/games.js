@@ -12,7 +12,7 @@ let config = {
 
 router.route("/").post(async (req, res) => {
   try {
-    const {gameTitle, limit} = req.body;
+    const { gameTitle, limit } = req.body;
     let data = `fields name, genres; search "${gameTitle.name}"; limit ${limit};`;
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
@@ -41,10 +41,16 @@ router.route("/genre").post(async (req, res) => {
 });
 
 router.route("/popular").post(async (req, res) => {
-  const { genres, ids } = req.body;
+  const { genres, ids, played, future } = req.body;
   let data = `fields id, name, genres.name, summary, total_rating, total_rating_count, cover.url, first_release_date; sort total_rating_count desc; limit 10; where (genres = [${genres.join(
     ","
-  )}] & first_release_date > 1641013200 & total_rating > 80 & id != (${ids.join(",")}));`;
+  )}] & first_release_date > 1641013200 & total_rating > 80 & id != (${ids.join(
+    ","
+  )}) & id != (${played.join(
+    ","
+  )}) & id != (${future.join(
+    ","
+  )}));`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
@@ -59,7 +65,7 @@ router.route("/popular").post(async (req, res) => {
 
 router.route("/:id").post(async (req, res) => {
   const id = req.params.id;
-  let data = `fields name, cover.url, genres, summary, first_release_date, total_rating, screenshots, videos.video_id; where id = ${id};`;
+  let data = `fields name, cover.url, genres, summary, first_release_date, total_rating, screenshots, videos.video_id, platforms.name, involved_companies.company.name; where id = ${id};`;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
