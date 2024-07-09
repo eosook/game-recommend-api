@@ -44,7 +44,7 @@ router.route("/popular").post(async (req, res) => {
   const { genres, ids, played, future } = req.body;
   let data = `fields id, name, genres.name, summary, total_rating, total_rating_count, cover.url, first_release_date; sort total_rating_count desc; limit 10; where (genres = [${genres.join(
     ","
-  )}] & first_release_date > 1641013200 & total_rating > 80 & id != (${ids.join(
+  )}] & first_release_date > 1625878828 & total_rating > 80 & id != (${ids.join(
     ","
   )}) & id != (${played.join(
     ","
