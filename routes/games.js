@@ -6,7 +6,7 @@ const router = express.Router();
 let config = {
   headers: {
     "Client-ID": `cqjhxa9azl5us0peawivmcyt9u9mqu`,
-    Authorization: `Bearer f952a45fy25ewb560x7e9mlq6gziyd`,
+    Authorization: `Bearer s6bmn4xvbxni6stsoxrw4b51rm5lh9`,
   },
 };
 
